@@ -1,4 +1,7 @@
+# -- coding: utf-8 --
+
 import datetime
+import os
 import pandas as pd
 from pandas import DataFrame
 import sqlalchemy
@@ -9,7 +12,14 @@ print(dt.now())
 
 # 从NOAA的csv文件中夹在数据
 # pandas提供从各种文件抽取数据的功能
-weather_data = pd.read_csv('/work/noaa/2015.csv',
+print('Read The Data From ${project}/data/2015.csv')
+projectRootPath = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+weatherDataPath = projectRootPath + "/data/2015.csv"
+stationsPath = projectRootPath + "/data/ghcnd-stations.txt"
+
+print 'Begin load weather data from ' + weatherDataPath
+print(dt.now())
+weather_data = pd.read_csv(weatherDataPath,
                            header=None, index_col=False,
                            names=['station_identifier',
                                   'measurement_date',
@@ -20,12 +30,9 @@ weather_data = pd.read_csv('/work/noaa/2015.csv',
                                   'observation_time'],
                            parse_dates=['measurement_date'])
 
-# print('head')
-# print(weather_data.head())
-# print('type')
-# print(weather_data[weather_data.measurement_type.isin(['PRCP', 'SNOW', 'SNWD', 'TMAX', 'TWIN'])])
-
-# print('sub data')
+print('Load weather_data: ')
+print(dt.now())
+print(weather_data)
 
 '''
 对数据进行初步过滤清洗。取得原始数据的子集
@@ -60,7 +67,7 @@ execute = True #执行标记
 db_name = 'postgres'
 connection_string = "postgresql://postgres:123456@localhost:5432/postgres"
 conn = sqlalchemy.create_engine(connection_string) #conn是连接实例
-print(conn)
+print conn
 table_name = 'weather_data'
 column_type_dict = {'measurement_flag': sqlalchemy.types.Integer}
 
@@ -80,8 +87,10 @@ while (execute):
                        if_exists='replace' if 0 == start else 'append')
     start = end
 
+
+print 'Stations Ghcnd Data Path: ' + weatherDataPath
 #读取标记的元数据
-station_metadata = pd.read_csv('/work/noaa/ghcnd-stations.txt', sep='\s+', usecols=[0, 1, 2, 3], na_values=[-999.9],
+station_metadata = pd.read_csv(stationsPath, sep='\s+', usecols=[0, 1, 2, 3], na_values=[-999.9],
                                header=None, names=['station_id', 'latitude', 'longitude', 'elevation'])
 station_metadata.head()
 print(station_metadata)

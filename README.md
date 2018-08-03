@@ -1,5 +1,4 @@
 # Business Intelligence Process Example 
-标签（空格分隔）： superset chkui
 An Example of BI.
 
 ---
@@ -15,7 +14,7 @@ Jupyter notebook script.
 Python dependence.
 
 ---
-## Check List
+## Download And Install
 ### 1.Python environment. 
 Superset using Python2.7 in production, but it support 3.x. Suggestting 2.7.x.
 ### 2.Python Virtual Environment
@@ -48,7 +47,7 @@ Install superset:
 ```bash
 $ pip install superset
 ```
-### Administrator And Run
+### 4.Administrator And Run
 Create administrator with Flask-AppBuilder.
 ```bash
 # Create an admin user (you will be prompted to set username, first and last name before setting a password)
@@ -67,7 +66,7 @@ superset init
 superset runserver -d
 ```
 Supperset Already install!
-### 4.Download The NOAA Weather Data
+### 5.Download The NOAA Weather Data
 Excute the `#Root/data/noaa-data.sh` script to download and unzip NOAA weather data from the FTP server. 
 Or use cURL command directly:
 ```bash
@@ -78,17 +77,94 @@ After downloading the data, gunzip it:
 ```bash
 gunzip 2015.csv.gz
 ```
-### Requirements
+### 6.Python Requirements
 Create virtual environment, and activating it:
 ```bash
-$ virtualenv venv
-$ . venv\bin\activate
+virtualenv venv
+#activating
+. venv\bin\activate
 ```
 Download the dependencies:
 ```bash
 $ pip install -r requirements.txt
 ```
-### 
+### 7.Setting up the PostgreSQL database 
+Install PostgreSQL(pgsql) 10:
+```bash
+$ sudo apt-get install postgresql-10 
+```
+Then an account names postgres has bean created. 
 
+Modify account password:
+```bash
+$ sudo -u postgres passwd
+```
 
+Login Database:
+```bash
+$ sudo -u postgres psql
+```
+Modify the Database password:
+```
+ALTER USER postgres WITH PASSWORD '123456';
+```
+### 8.Install jupyter
+```bash
+$ python -m pip install --upgrade pip
+python -m pip install jupyter
+```
+```bash
+$ jupyter nodebook
+```
+### 9.Examining Download Data
+```
+$ wc -l 2015.csv
+```
+```
+$ cut -d, -f1 2015.csv | sort | uniq | wc -l
+```
+## Processing
 
+### 1.Loading the data into PostgreSQL
+Loading the download data——`${project}/data/2015.csv ghcnd-stations.txt)` into PostgreSQL Data base.
+#### jupyter notebook
+We can use jupter noteboot to execute python code: 
+```
+$ jupyter notebook IngestData.ipynb
+```
+But there exists some problem.
+#### Execute Python
+```bash 
+$ python src/execute.py
+```
+This will take some time to complete.After of all, the data will load into pgSQL.
+Three table will be created —— `weather_data`,`station_metadata` and `weather_types`.
+### Denormalizing data
+Execute blow SQL:
+```sql
+CREATE TABLE weather_data_denormalized AS 
+    SELECT wd.station_identifier, 
+           wd.measurement_date, 
+           wd.measurement_type, 
+           wt.weather_description, 
+           wd.measurement_flag, 
+           sm.latitude, 
+           sm.longitude, 
+           sm.elevation 
+    FROM weather_data wd 
+    JOIN station_metadata sm 
+        ON wd.station_identifier = sm.station_id 
+    JOIN weather_types wt 
+        ON wd.measurement_type = wt.weather_type;
+```
+### Create Indexs
+```sql
+CREATE INDEX date_index ON weather_data_denormalized (measurement_date);
+CREATE INDEX type_index ON weather_data_denormalized (measurement_type);
+CREATE INDEX description_index ON weather_data_denormalized (weather_description);
+CREATE INDEX flag_index ON weather_data_denormalized (measurement_flag);
+CREATE INDEX elevation_index ON weather_data_denormalized (elevation);
+```
+### Configuring Superset
+Then using Superset to create your dashboard:
+>http://superset.apache.org/tutorial.html
