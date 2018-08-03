@@ -67,10 +67,9 @@ execute = True #执行标记
 db_name = 'postgres'
 connection_string = "postgresql://postgres:123456@localhost:5432/postgres"
 conn = sqlalchemy.create_engine(connection_string) #conn是连接实例
-print conn
+
 table_name = 'weather_data'
 column_type_dict = {'measurement_flag': sqlalchemy.types.Integer}
-
 
 while (execute):
     end = start + chunkSize
@@ -97,13 +96,13 @@ print(station_metadata)
 print(len(station_metadata[station_metadata['elevation'].isnull()]))
 
 metadata_table_name = 'station_metadata'
-station_metadata.to_sql(metadata_table_name, conn, index_label='id')
+station_metadata.to_sql(metadata_table_name, conn, index_label='id', if_exists='replace')
 
 weather_type_dict = {'PRCP': 'Precipitation', 'SNOW': 'Snowfall', 'SNWD': 'Snow Depth',
                      'TMAX': 'Maximum temperature', 'TMIN': 'Minimum temperature'}
 weather_type_df = DataFrame(weather_type_dict.items(), columns=['weather_type', 'weather_description'])
 description_table_name = 'weather_types'
-weather_type_df.to_sql(description_table_name, conn, index_label='id')#元数据入库
+weather_type_df.to_sql(description_table_name, conn, index_label='id', if_exists='replace')#元数据入库
 
 print('EXIT')
 print('End time: ')

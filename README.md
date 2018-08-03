@@ -1,5 +1,5 @@
 # Business Intelligence Process Example 
-An Example of BI.
+An example of Business Intelligence From Origin Data to Dashboard
 
 ---
 ## Files/Folder Description
@@ -18,7 +18,7 @@ Python dependence.
 ### 1.Python environment. 
 Superset using Python2.7 in production, but it support 3.x. Suggestting 2.7.x.
 ### 2.Python Virtual Environment
-It is recommended to install Superset inside a virtualenv.Python 3 already ships virtualenv, for Python 2 you need to install it.
+It is recommended to install Superset inside a virtualenv.Python 3 already ships virtualenv, for Python 2 need to install it.
 ```bash
 $ sudo pip install virtualenv
 ```
@@ -132,13 +132,12 @@ We can use jupter noteboot to execute python code:
 ```
 $ jupyter notebook IngestData.ipynb
 ```
-But there exists some problem.
+But it exists some problems.
 #### Execute Python
 ```bash 
 $ python src/execute.py
 ```
-This will take some time to complete.After of all, the data will load into pgSQL.
-Three table will be created —— `weather_data`,`station_metadata` and `weather_types`.
+This will take some time to complete.After of all, the data will be loaded into pgSQL, and three table will be created —— `weather_data`,`station_metadata` and `weather_types`.
 ### Denormalizing data
 Execute blow SQL:
 ```sql
