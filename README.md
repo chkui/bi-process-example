@@ -164,6 +164,48 @@ CREATE INDEX description_index ON weather_data_denormalized (weather_description
 CREATE INDEX flag_index ON weather_data_denormalized (measurement_flag);
 CREATE INDEX elevation_index ON weather_data_denormalized (elevation);
 ```
-### Configuring Superset
+## Superset Dashboard
 Then using Superset to create your dashboard:
 >http://superset.apache.org/tutorial.html
+
+### Set Database
+1. Sources->Database.
+2. Input the SQLAlchemy URI string.
+3. Then "Test Connection". 
+
+### Set Table
+1. Sources->Tables.
+2. Select new Database.
+3. Input the table name: weather_data_denormalized.
+
+### Exploring Data
+1. Sources->Tables. Simply click on the table name of the list of tables.
+
+##Superset Development
+### Front&&Chart
+It's developed by React where '${install_path}/superset/static/assets'.
+#### Folder
+1. branding: Logo.
+1. images: all of the images which supports superset web.
+1. spec: Config file.
+1. src: develop file.
+1. stylesheets: style file, css,less e.g.
+1. verdor: Third part lib implements with React.
+#### add charts
+- Add path:  ${superset_root}/static/assets/src/visualizations
+- add custom charts as a React Component who includes .jsx/js and css part.such blow:
+```javascript
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
+import { XYChart, AreaSeries, CrossHair, LinearGradient } from '@data-ui/xy-chart';
+
+class Costom extends React.Component{
+    //TODO
+}
+```
+- Add costom component in index.js (${superset_root}/static/assets/src/visualizations):
+- Add costom charts in ${superset_root}/static/assets/src/explore/visTypes.jsx for adding data options in slice.
+- Add images in ${superset_root}/static/assets/images/viz_thumbnails/
+
+> About front development details see https://github.com/chkui/superset(Forked from ryoha13/superset).
