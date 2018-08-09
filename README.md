@@ -181,7 +181,7 @@ Then using Superset to create your dashboard:
 ### Exploring Data
 1. Sources->Tables. Simply click on the table name of the list of tables.
 
-##Superset Development
+## Superset Development
 ### Front&&Chart
 It's developed by React where '${install_path}/superset/static/assets'.
 #### Folder
